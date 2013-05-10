@@ -751,13 +751,14 @@ Do not remove.
 }
 
 section[role="region"].new #messages-container[data-type="list"] > ul.contactList {
+  background: white;
   position: absolute;
-  width: 100%;
+  width: calc(100% - 3.1rem);
   z-index: 5;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: -moz-calc(100% - 5rem)  ;
-  padding: 0;
+  max-height: -moz-calc(100% - 5rem);
+  padding: 0 1.5rem;
 }
 
 section[role="region"].new #messages-container[data-type="list"] {
