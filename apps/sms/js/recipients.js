@@ -654,6 +654,8 @@
    *
    * @return {Undefined} void return.
    */
+  var rkey = /^key/;
+
   Recipients.View.prototype.handleEvent = function(proof, event) {
     var view = priv.get(this);
     var relation = view.relation;
@@ -674,7 +676,7 @@
 
     // All keyboard events will need some information
     // about the input that the user typed.
-    if (event instanceof KeyboardEvent) {
+    if (rkey.test(event.type)) {
       typed = target.textContent.trim();
       length = typed.length;
     }
