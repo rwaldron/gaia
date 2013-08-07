@@ -322,22 +322,15 @@ html, body {
   display: block;
 }
 
-#digital-clock-background {
-  height: 100%;
+#digital-clock-container {
   overflow: hidden;
-  background-image: none;
-  display: none;
-}
-
-#digital-clock-background.visible {
-  height: 22.1rem; /* 48%; */
-  display: block;
-  background: url(images/digital_bk.png) no-repeat;
+  height: 11rem;
 }
 
 #digital-clock {
-  margin-top: 6.50rem;
   display: none;
+  margin-top: 6.50rem;
+  height: 100%;
 }
 
 #digital-clock.visible {
@@ -345,7 +338,7 @@ html, body {
 }
 
 #digital-clock-display {
- text-align: center;
+  text-align: center;
   position: absolute;
   width: 100%;
   margin: auto;
@@ -449,7 +442,7 @@ html, body {
   fill: #597980;
 }
 #minutehandCentralPoint { /* dark-gray central point*/
-  stroke-width: 0rem; 
+  stroke-width: 0rem;
 }
 
 /* banner*/
