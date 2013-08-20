@@ -436,11 +436,22 @@ XULRUNNERSDK=./xulrunner-sdk/bin/run-mozilla.sh
 XPCSHELLSDK=./xulrunner-sdk/bin/xpcshell
 endif
 
+pleasewait = "Please wait while I download zool runner, this will only take a moment, I swear. Maybe you should get a coffee. Have you red Hacker News today?"
+
+please-wait:
+
+ifeq ($(SYS),Darwin)
+	say $(pleasewait)
+else
+	echo $(pleasewait)|espeak
+endif
+
 .PHONY: install-xulrunner-sdk
 install-xulrunner-sdk:
 ifndef USE_LOCAL_XULRUNNER_SDK
 ifneq ($(XULRUNNER_SDK_DOWNLOAD),$(shell cat .xulrunner-url 2> /dev/null))
 	rm -rf xulrunner-sdk
+	make please-wait
 	$(DOWNLOAD_CMD) $(XULRUNNER_SDK_DOWNLOAD)
 ifeq ($(findstring MINGW32,$(SYS)), MINGW32)
 	unzip xulrunner*.zip && rm xulrunner*.zip
