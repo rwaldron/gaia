@@ -13,7 +13,7 @@ var ThreadListUI = {
 
   init: function thlui_init() {
     this.tmpl = {
-      thread: Utils.Template('messages-thread-tmpl')
+      thread: Template('messages-thread-tmpl')
     };
 
     // TODO: https://bugzilla.mozilla.org/show_bug.cgi?id=854413

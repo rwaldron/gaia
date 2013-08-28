@@ -6,7 +6,6 @@ var MockUtils = {
   camelCase: Utils.camelCase,
   date: Utils.date,
   startTimeHeaderScheduler: function() {},
-  Template: Utils.Template,
   getFontSize: function() {
     return 12;
   },

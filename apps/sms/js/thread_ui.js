@@ -220,7 +220,7 @@ var ThreadUI = global.ThreadUI = {
 
     this.tmpl = templateIds.reduce(function(tmpls, name) {
       tmpls[Utils.camelCase(name)] =
-        Utils.Template('messages-' + name + '-tmpl');
+        Template('messages-' + name + '-tmpl');
       return tmpls;
     }, {});
 
@@ -2200,7 +2200,7 @@ function generateHeightRule(height) {
 
   sheet = generateHeightRule.sheet || sheets[sheets.length - 1];
   index = generateHeightRule.index || sheet.cssRules.length;
-  tmpl = generateHeightRule.tmpl || Utils.Template('height-rule-tmpl');
+  tmpl = generateHeightRule.tmpl || Template('height-rule-tmpl');
 
   css = tmpl.interpolate({
     height: String(height)
