@@ -6,7 +6,7 @@ MockAlarmList = {
   alarmEditView: function() {},
   init: function() {},
   refresh: function() {},
-  buildAlarmContent: function() {},
+  render: function() {},
   refreshItem: function() {},
   fillList: function() {},
   getAlarmFromList: function() {},

@@ -354,7 +354,7 @@ var ThreadListUI = {
     var participants = thread.participants;
     var number = participants[0];
     var id = thread.id;
-    var bodyHTML = Utils.escapeHTML(thread.body || '');
+    var bodyHTML = Template.escape(thread.body || '');
 
     li.id = 'thread-' + id;
     li.dataset.threadId = id;

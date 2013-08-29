@@ -4,14 +4,6 @@
   'use strict';
   var rdashes = /-(.)/g;
   var rescape = /[.?*+^$[\]\\(){}|-]/g;
-  var rentity = /[&<>"']/g;
-  var rentities = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&apos;'
-  };
   var rparams = /([^?=&]+)(?:=([^&]*))?/g;
   var rnondialablechars = /[^,#+\*\d]/g;
 
@@ -82,14 +74,6 @@
         return '';
       }
       return str.replace(rescape, '\\$&');
-    },
-    escapeHTML: function ut_escapeHTML(str) {
-      if (typeof str !== 'string') {
-        return '';
-      }
-      return str.replace(rentity, function(s) {
-        return rentities[s];
-      });
     },
     getFormattedHour: function ut_getFormattedHour(time) {
       this.date.shared.setTime(+time);

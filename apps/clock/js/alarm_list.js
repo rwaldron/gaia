@@ -23,6 +23,8 @@ var AlarmList = {
     return this.newAlarmButton = document.getElementById('alarm-new');
   },
 
+  template: null,
+
   handleEvent: function al_handleEvent(evt) {
 
     var link = evt.target;
@@ -57,6 +59,7 @@ var AlarmList = {
   },
 
   init: function al_init() {
+    this.template = new Template('alarm-list-item-tmpl');
     this.newAlarmButton.addEventListener('click', this);
     this.alarms.addEventListener('click', this);
     this.refresh();
@@ -73,37 +76,35 @@ var AlarmList = {
     }.bind(this));
   },
 
-  buildAlarmContent: function al_buildAlarmContent(alarm) {
-    var summaryRepeat = !alarm.isRepeating() ?
-      '' : alarm.summarizeDaysOfWeek();
-    var alarmActive = alarm.registeredAlarms['normal'] ||
-      alarm.registeredAlarms['snooze'];
-    var isChecked = !!alarmActive ? ' checked="true"' : '';
+  render: function al_render(alarm) {
+    var repeat = alarm.isRepeating() ?
+      alarm.summarizeDaysOfWeek() : '';
+    var isActive = alarm.registeredAlarms.normal ||
+      alarm.registeredAlarms.snooze;
+    var isChecked = !!isActive ? 'checked=true' : '';
+
     var d = new Date();
     d.setHours(alarm.hour);
     d.setMinutes(alarm.minute);
+
+    var id = alarm.id + '';
     var time = Utils.getLocaleTime(d);
-    var label = (alarm.label === '') ?
-      _('alarm') : Utils.escapeHTML(alarm.label);
-    return '<label class="alarmList alarmEnable">' +
-           '  <input class="input-enable"' +
-                 '" data-id="' + alarm.id +
-                 '" type="checkbox"' + isChecked + '>' +
-           '  <span></span>' +
-           '</label>' +
-           '<a href="#alarm" class="alarm-item" data-id="' + alarm.id + '">' +
-           '  <span class="time">' +
-                time.t + '<span class="period">' + time.p + '</span>' +
-           '  </span>' +
-           '  <span class="label">' + label + '</span>' +
-           '  <span class="repeat">' + summaryRepeat + '</span>' +
-           '</a>';
+    var label = alarm.label ? alarm.label : _('alarm');
+
+    return this.template.interpolate({
+      id: id,
+      isChecked: isChecked,
+      label: label,
+      meridian: time.p,
+      repeat: repeat,
+      time: time.t
+    });
   },
 
   createItem: function al_createItem(alarm, appendTarget) {
     var li = document.createElement('li');
     li.className = 'alarm-cell';
-    li.innerHTML = this.buildAlarmContent(alarm);
+    li.innerHTML = this.render(alarm);
     if (appendTarget) {
       appendTarget.appendChild(li);
       if (this._previousAlarmCount !== this.getAlarmCount()) {
@@ -122,7 +123,7 @@ var AlarmList = {
       this.setAlarmFromList(alarm.id, alarm);
       var id = 'a[data-id="' + alarm.id + '"]';
       var alarmItem = this.alarms.querySelector(id);
-      alarmItem.parentNode.innerHTML = this.buildAlarmContent(alarm);
+      alarmItem.parentNode.innerHTML = this.render(alarm);
       // clear the refreshing alarm's flag
       var index = this.refreshingAlarms.indexOf(alarm.id);
       this.refreshingAlarms.splice(index, 1);

@@ -16,7 +16,6 @@ var MockUtils = {
   updateTimeHeader: function() {},
   // real code needed here to map types
   typeFromMimeType: Utils.typeFromMimeType,
-  escapeHTML: Utils.escapeHTML,
   escapeRegex: Utils.escapeRegex,
   params: Utils.params,
   getContactDisplayInfo: Utils.getContactDisplayInfo,
