@@ -1,26 +1,48 @@
+requireApp('clock/js/constants.js');
+requireApp('clock/js/utils.js');
+requireApp('clock/js/alarm.js');
 requireApp('clock/js/alarmsdb.js');
+requireApp('clock/js/alarm_manager.js');
 requireApp('clock/js/alarm_edit.js');
 requireApp('clock/js/alarm_list.js');
-requireApp('clock/js/alarm_manager.js');
-requireApp('clock/js/utils.js');
+requireApp('clock/js/active_alarm.js');
 
-requireApp('clock/test/unit/mocks/mock_alarm_manager.js');
-requireApp('clock/test/unit/mocks/mock_navigator_mozl10n.js');
+
 requireApp('clock/test/unit/mocks/mock_utils.js');
+requireApp('clock/test/unit/mocks/mock_alarmsDB.js');
+requireApp('clock/test/unit/mocks/mock_alarm_manager.js');
+requireApp('clock/test/unit/mocks/mock_asyncstorage.js');
+requireApp('clock/test/unit/mocks/mock_navigator_mozl10n.js');
+requireApp('clock/test/unit/mocks/mock_mozAlarm.js');
+
+
+
+
+// requireApp('clock/js/alarmsdb.js');
+// requireApp('clock/js/alarm_edit.js');
+// requireApp('clock/js/alarm_list.js');
+// requireApp('clock/js/alarm_manager.js');
+// requireApp('clock/js/utils.js');
+
+// requireApp('clock/test/unit/mocks/mock_alarm_manager.js');
+// requireApp('clock/test/unit/mocks/mock_navigator_mozl10n.js');
+// requireApp('clock/test/unit/mocks/mock_utils.js');
 
 
 suite('AlarmList', function() {
-  var am, nml, u, fixture, dom;
-  var id = 1;
+  var am, nml, nma, u, fixture, dom;
 
   suiteSetup(function() {
     am = AlarmManager;
     nml = navigator.mozL10n;
+    nma = navigator.mozAlarms;
     u = Utils;
 
     AlarmManager = MockAlarmManager;
     navigator.mozL10n = MockmozL10n;
+    navigator.mozAlarms = MockMozAlarms;
     Utils = MockUtils;
+
 
     loadBodyHTML('/index.html');
 
@@ -30,35 +52,31 @@ suite('AlarmList', function() {
   suiteTeardown(function() {
     AlarmManager = am;
     navigator.mozL10n = nml;
+    navigator.mozAlarms = nma;
     Utils = u;
   });
 
-  setup(function() {
-    dom = document.createElement('div');
-
-    fixture = {
-      normalAlarmId: '',
-      snoozeAlarmId: '',
-      label: 'FIXTURE',
-      hour: 14,
-      minute: 32,
-      enabled: true,
-      repeat: {},
-      sound: 'ac_classic_clock_alarm.opus',
-      vibrate: '1',
-      snooze: 5,
-      color: 'Darkorange',
-      id: 1
-    };
-  });
-
   suite('render()', function() {
+    setup(function() {
+      dom = document.createElement('div');
+
+      fixture = new Alarm({
+        id: 42,
+        hour: 14,
+        minute: 32,
+        registeredAlarms: {
+          normal: 37
+        }
+      });
+
+      fixture.label = 'FIXTURE';
+    });
 
     suite('markup contains correct information', function() {
 
       test('id ', function() {
         dom.innerHTML = AlarmList.render(fixture);
-        assert.ok(dom.querySelector('[data-id="1"]'));
+        assert.ok(dom.querySelector('[data-id="42"]'));
       });
 
       test('enabled ', function() {
@@ -67,7 +85,12 @@ suite('AlarmList', function() {
       });
 
       test('disabled ', function() {
-        fixture.enabled = false;
+
+        fixture = new Alarm({
+          hour: 14,
+          minute: 32
+        });
+
         dom.innerHTML = AlarmList.render(fixture);
         assert.isNull(dom.querySelector('input[checked=true]'));
       });
@@ -87,14 +110,14 @@ suite('AlarmList', function() {
         fixture.repeat = { monday: true };
         dom.innerHTML = AlarmList.render(fixture);
         assert.equal(
-          dom.querySelector('.repeat').textContent, '{"monday":true}'
+          dom.querySelector('.repeat').textContent, 'weekday-1-short'
         );
       });
 
       test('no repeat ', function() {
         fixture.label = '';
         dom.innerHTML = AlarmList.render(fixture);
-        assert.equal(dom.querySelector('.repeat').textContent, '{}');
+        assert.equal(dom.querySelector('.repeat').textContent, '');
       });
     });
   });

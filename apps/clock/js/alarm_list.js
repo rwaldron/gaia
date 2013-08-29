@@ -77,11 +77,15 @@ var AlarmList = {
   },
 
   render: function al_render(alarm) {
+
+    // console.log( alarm.registeredAlarms );
+
+
     var repeat = alarm.isRepeating() ?
       alarm.summarizeDaysOfWeek() : '';
     var isActive = alarm.registeredAlarms.normal ||
       alarm.registeredAlarms.snooze;
-    var isChecked = !!isActive ? 'checked=true' : '';
+    var checked = !!isActive ? 'checked=true' : '';
 
     var d = new Date();
     d.setHours(alarm.hour);
@@ -93,7 +97,7 @@ var AlarmList = {
 
     return this.template.interpolate({
       id: id,
-      isChecked: isChecked,
+      checked: checked,
       label: label,
       meridian: time.p,
       repeat: repeat,
@@ -167,7 +171,7 @@ var AlarmList = {
     }
     var changed = false;
     // has a snooze active
-    if (alarm.registeredAlarms['snooze'] !== undefined) {
+    if (alarm.registeredAlarms.snooze !== undefined) {
       if (!enabled) {
         alarm.cancel('snooze');
         changed = true;
