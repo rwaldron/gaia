@@ -1,0 +1,11 @@
+{
+  "name": "Focus",
+  "type": "certified",
+  "launch_path": "/index.html",
+  "description": "Reduced Focus Keyboard issue",
+  "developer": {
+      "name": "Rick Waldron",
+      "url": "https://github.com/mozilla-b2g/gaia"
+  },
+  "permissions": {}
+}

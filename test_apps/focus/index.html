@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>focus issue</title>
+    <!-- Stable Building blocks -->
+    <style>
+      button {
+        font-size: 2rem;
+      }
+      #list {
+        width: 100%;
+        height: auto;
+      }
+      #list span {
+        display: inline-block;
+        overflow: hidden;
+        max-width: calc(100% - 2.3rem);
+        height: 2.2rem;
+        border: .1rem solid #4d4d4d;
+        padding: 0.8rem 0.8rem 0 0.8rem;
+
+        background: -moz-linear-gradient(#fff, #f1f1f1);
+        color: #2c2c2c;
+        margin-right: 0.5rem;
+        border-radius: .3rem;
+        font-size: 1.7rem;
+      }
+
+      #list span[contenteditable=true] {
+        padding-left: 0;
+        padding-right: 1.6rem;
+
+        background: none;
+        border-color: transparent;
+        white-space: normal;
+        text-overflow: normal;
+        color: black;
+        font-size: 1.8rem;
+      }
+
+      #list span[contenteditable=true]:empty:focus {
+        margin-right: 0.5rem;
+        padding: 0 0.8rem;
+        border-width: 0.1rem;
+      }
+    </style>
+  </head>
+
+  <body role="application">
+    <div id="container">
+      <br><br><br><br>
+      <div id="list"><span x-inputmode="verbatim" contenteditable>ABC</span></div>
+      <hr>
+<!--       <button id="accept">ACCEPT</button> -->
+      <button id="focus">FOCUS</button>
+    </div>
+    <script defer src="js/focus.js"></script>
+
+  </body>
+</html>
