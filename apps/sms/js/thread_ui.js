@@ -305,7 +305,7 @@ var ThreadUI = global.ThreadUI = {
       //
       //  Ideally, the contact will be found by the
       //  searchContact + validateContact operation and the
-      //  recipientsChanged handler will be re-called with a known
+      //  handler will be re-called with a known
       //  and valid recipient from the user's contacts.
       if (isOk) {
         // update composer header whenever recipients change
@@ -767,7 +767,7 @@ var ThreadUI = global.ThreadUI = {
       this.stopRendering();
 
       var currentActivity = ActivityHandler.currentActivity.new;
-      var discard;
+      var discard, discardDraft;
 
       if (currentActivity) {
         currentActivity.postResult({ success: true });
@@ -780,13 +780,28 @@ var ThreadUI = global.ThreadUI = {
         window.location.hash = '#thread-list';
       }).bind(this);
 
+      discardDraft = (function() {
+        Drafts.delete(MessageManager.draft);
+        MessageManager.draft = null;
+        // Force ThreadList to re-render threads
+        // whose draft status has changed
+        if (Threads.active) {
+          ThreadListUI.updateThread(Threads.active);
+        }
+        discard();
+      }).bind(this);
+
       // TODO Add comment about assimilation above on line #183?
       // Need to assimilate recipients in order to check if any entered
       this.assimilateRecipients();
 
-      if (Compose.isEmpty() && this.recipients.length === 0) {
-        // TODO Also check for empty subject
-        discard();
+      // If the composer is empty and we are either
+      // in an active thread or there are no recipients
+      // do not prompt to save a draft and remove saved drafts
+      // as the user deleted them manually
+      if (Compose.isEmpty() &&
+        (Threads.active || this.recipients.length === 0)) {
+        discardDraft();
         return;
       }
 
@@ -801,7 +816,7 @@ var ThreadUI = global.ThreadUI = {
           },
           {
             l10nId: 'discard-message',
-            method: discard
+            method: discardDraft
           },
           {
             l10nId: 'cancel'
@@ -1356,6 +1371,7 @@ var ThreadUI = global.ThreadUI = {
     };
 
     MessageManager.getMessages(renderingOptions);
+
     // force the next scroll to bottom
     this.isScrolledManually = false;
   },
@@ -1986,7 +2002,8 @@ var ThreadUI = global.ThreadUI = {
   },
 
   onMessageSent: function thui_onMessageSent(message) {
-    var messageDOM = document.getElementById('message-' + message.id);
+    var threadId = message.id;
+    var messageDOM = document.getElementById('message-' + threadId);
 
     if (!messageDOM) {
       return;
@@ -1995,6 +2012,15 @@ var ThreadUI = global.ThreadUI = {
     // Update class names to reflect message state
     messageDOM.classList.remove('sending');
     messageDOM.classList.add('sent');
+
+    // If the message we sent is associated with a threadId
+    // which has a draft, delete it
+    // Use Drafts.byThreadId as it is mocked during testing
+    if (Drafts.byThreadId(threadId).length) {
+      Drafts.delete({
+        threadId: threadId
+      });
+    }
 
     // Play the audio notification
     if (this.sentAudioEnabled) {
@@ -2565,15 +2591,9 @@ var ThreadUI = global.ThreadUI = {
 
       // Pick out the threadId that matches
       // all the recipients in this draft.
-      Threads.forEach(function(t) {
-        var p = Threads.get(t.id).participants;
-        if (p.length === 1) {
-          for (var i = 0; i < p.length; i++) {
-            if (Utils.probablyMatches(p[i], recipients[i])) {
-              threadId = t.id;
-              break;
-            }
-          }
+      Threads.forEach(function(t, id) {
+        if (Utils.multiRecipientMatch(t.participants, recipients)) {
+          threadId = id;
         }
       });
       threadId = threadId || null;
@@ -2599,6 +2619,7 @@ var ThreadUI = global.ThreadUI = {
 
       ThreadListUI.updateThread(thread);
     }
+    MessageManager.draft = null;
   }
 };
 
