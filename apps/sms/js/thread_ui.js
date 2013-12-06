@@ -2588,11 +2588,14 @@ var ThreadUI = global.ThreadUI = {
       threadId = threadId || null;
     }
 
+    var draftId = MessageManager.draft ? MessageManager.draft.id : null;
+
     draft = new Draft({
       recipients: recipients,
       content: content,
       threadId: threadId,
-      type: type
+      type: type,
+      id: draftId
     });
 
     Drafts.add(draft);
@@ -2607,6 +2610,8 @@ var ThreadUI = global.ThreadUI = {
       thread.timestamp = draft.timestamp;
 
       ThreadListUI.updateThread(thread);
+    } else {
+      ThreadListUI.updateThread(draft);
     }
     MessageManager.draft = null;
   }
