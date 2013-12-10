@@ -2577,15 +2577,6 @@ var ThreadUI = global.ThreadUI = {
       threadId = Threads.currentId;
     } else {
       recipients = this.recipients.numbers;
-
-      // Pick out the threadId that matches
-      // all the recipients in this draft.
-      Threads.forEach(function(t, id) {
-        if (Utils.multiRecipientMatch(t.participants, recipients)) {
-          threadId = id;
-        }
-      });
-      threadId = threadId || null;
     }
 
     var draftId = MessageManager.draft ? MessageManager.draft.id : null;
