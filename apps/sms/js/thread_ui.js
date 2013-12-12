@@ -1943,6 +1943,14 @@ var ThreadUI = global.ThreadUI = {
     // Clean composer fields (this lock any repeated click in 'send' button)
     this.cleanFields(true);
 
+    // If there was a draft, it just got sent
+    // so delete it
+    if (MessageManager.draft) {
+      ThreadListUI.removeThread(MessageManager.draft.id);
+      Drafts.delete(MessageManager.draft);
+      MessageManager.draft = null;
+    }
+
     this.updateHeaderData();
 
     // Send the Message
@@ -1991,8 +1999,7 @@ var ThreadUI = global.ThreadUI = {
   },
 
   onMessageSent: function thui_onMessageSent(message) {
-    var threadId = message.id;
-    var messageDOM = document.getElementById('message-' + threadId);
+    var messageDOM = document.getElementById('message-' + message.id);
 
     if (!messageDOM) {
       return;
@@ -2001,15 +2008,6 @@ var ThreadUI = global.ThreadUI = {
     // Update class names to reflect message state
     messageDOM.classList.remove('sending');
     messageDOM.classList.add('sent');
-
-    // If the message we sent is associated with a threadId
-    // which has a draft, delete it
-    // Use Drafts.byThreadId as it is mocked during testing
-    if (Drafts.byThreadId(threadId).length) {
-      Drafts.delete({
-        threadId: threadId
-      });
-    }
 
     // Play the audio notification
     if (this.sentAudioEnabled) {
