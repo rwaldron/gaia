@@ -3930,7 +3930,18 @@ suite('thread_ui.js >', function() {
       assert.deepEqual(arg.content, ['foo']);
     });
 
-    test('thread is updated in thread list', function() {
+    test('thread is updated in thread list, threadbound', function() {
+      Threads.set(1, {
+        participants: ['999']
+      });
+      window.location.hash = '#thread=1';
+
+      ThreadUI.saveMessageDraft();
+
+      assert.isTrue(updateSpy.calledOnce);
+    });
+
+    test('thread is updated in thread list, threadless', function() {
       ThreadUI.saveMessageDraft();
 
       assert.isTrue(updateSpy.calledOnce);
@@ -3970,6 +3981,41 @@ suite('thread_ui.js >', function() {
       assert.equal(Drafts.byThreadId(1).length, 1);
     });
 
+    test('Update thread timestamp if within thread', function() {
+
+      this.sinon.stub(window, 'Draft').returns({
+        timestamp: 2
+      });
+
+      Threads.set(1, {
+        participants: ['999'],
+        timestamp: 1
+      });
+
+      window.location.hash = '#thread=1';
+
+      ThreadUI.saveMessageDraft();
+
+      assert.equal(Threads.get(1).timestamp, 2);
+    });
+
+    test('Update thread unreadCount if within thread', function() {
+
+      this.sinon.stub(window, 'Draft').returns({
+        unreadCount: 2
+      });
+
+      Threads.set(1, {
+        participants: ['999'],
+        unreadCount: 0
+      });
+
+      window.location.hash = '#thread=1';
+
+      ThreadUI.saveMessageDraft();
+
+      assert.equal(Threads.get(1).unreadCount, 0);
+    });
   });
 
 suite('Back button behaviour', function() {

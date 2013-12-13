@@ -5,7 +5,8 @@
          SMIL, ErrorDialog, MessageManager, MozSmsFilter, LinkHelper,
          ActivityPicker, ThreadListUI, OptionMenu, Threads, Contacts,
          Attachment, WaitingScreen, MozActivity, LinkActionHandler,
-         ActivityHandler, TimeHeaders, ContactRenderer, Draft, Drafts */
+         ActivityHandler, TimeHeaders, ContactRenderer, Draft, Drafts,
+         Thread */
 /*exported ThreadUI */
 
 (function(global) {
@@ -523,6 +524,9 @@ var ThreadUI = global.ThreadUI = {
   // Function for handling when a new message (sent/received)
   // is detected
   onMessage: function onMessage(message) {
+    // Update the stored thread data
+    Threads.set(message.threadId, Thread.create(message));
+
     this.appendMessage(message);
     TimeHeaders.updateAll('header[data-time-update]');
   },
@@ -2555,10 +2559,16 @@ var ThreadUI = global.ThreadUI = {
       // the drafts timestamp.
       thread.timestamp = draft.timestamp;
 
+      // Since we're leaving a thread's message view,
+      // ensure that the thread object's unreadCount
+      // value is current (set = 0)
+      thread.unreadCount = 0;
+
       ThreadListUI.updateThread(thread);
     } else {
       ThreadListUI.updateThread(draft);
     }
+
     MessageManager.draft = null;
   }
 };

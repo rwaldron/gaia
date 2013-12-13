@@ -42,7 +42,7 @@ var mocksHelperForMessageManager = new MocksHelper([
   'MozSmsFilter',
   'LinkActionHandler',
   'GroupView',
-  'ReportView'
+  'ReportView',
   'Recipients',
   'SMIL',
   'ThreadListUI',
