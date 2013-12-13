@@ -4061,6 +4061,8 @@ suite('Back button behaviour', function() {
         });
 
         test('Discard', function() {
+          MessageManager.draft = {id: 3};
+          var spy = this.sinon.spy(ThreadListUI, 'removeThread');
           ThreadUI.back();
 
           OptionMenu.args[0][0].items[1].method();
@@ -4068,6 +4070,8 @@ suite('Back button behaviour', function() {
           assert.equal(window.location.hash, '#thread-list');
           assert.equal(ThreadUI.recipients.length, 0);
           assert.equal(Compose.getContent(), '');
+          assert.isTrue(spy.calledOnce);
+          assert.isNull(MessageManager.draft);
         });
       });
     });
