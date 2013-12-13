@@ -4,7 +4,7 @@
          LinkHelper, Attachment, MockContact, MockOptionMenu,
          MockActivityPicker, Threads, Settings, MockMessages, MockUtils,
          MockContacts, ActivityHandler, Recipients, MockMozActivity,
-         ContactRenderer, UIEvent, Drafts, OptionMenu */
+         ThreadListUI, ContactRenderer, UIEvent, Drafts, OptionMenu */
 
 'use strict';
 
@@ -3841,7 +3841,7 @@ suite('thread_ui.js >', function() {
   });
 
   suite('saveMessageDraft() > ', function() {
-    var addSpy, updateSpy, arg, id;
+    var addSpy, updateSpy, arg;
 
     setup(function() {
       window.location.hash = '#new';
