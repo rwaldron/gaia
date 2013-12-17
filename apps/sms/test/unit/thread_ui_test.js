@@ -3719,6 +3719,25 @@ suite('thread_ui.js >', function() {
       assert.isTrue(spy.calledOnce);
     });
 
+    test('Removes thread-bound draft if thread-less sent to same', function() {
+      this.sinon.stub(Threads, 'get').returns({
+        hasDrafts: true,
+        drafts: {
+          latest: {
+            threadId: 1
+          }
+        }
+      });
+
+      this.sinon.stub(Drafts, 'delete');
+      this.sinon.stub(Drafts, 'store');
+
+      ThreadUI.onMessageSent({threadId: 1, id: 2});
+
+      sinon.assert.calledOnce(Drafts.delete);
+      sinon.assert.calledWithMatch(Drafts.delete, {threadId: 1});
+      sinon.assert.calledOnce(Drafts.store);
+    });
   });
 
   suite('Contact Picker Behavior(contactPickButton)', function() {
