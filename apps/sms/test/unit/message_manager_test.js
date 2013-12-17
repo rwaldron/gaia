@@ -119,6 +119,36 @@ suite('message_manager.js >', function() {
     );
   });
 
+   suite('on message sending > ', function() {
+    setup(function() {
+      this.sinon.stub(Threads, 'registerMessage');
+      this.sinon.stub(Threads, 'get').returns({
+        hasDrafts: true,
+        drafts: {
+          latest: {
+            threadId: 1
+          }
+        }
+      });
+
+      this.sinon.stub(Drafts, 'delete').returns(Drafts);
+      this.sinon.stub(Drafts, 'store').returns(Drafts);
+    });
+
+    test('Removes thread-bound draft if thread-less sent to same', function() {
+      MessageManager.onMessageSending({
+        message: {
+          threadId: 1
+        }
+      });
+
+      sinon.assert.calledOnce(Drafts.delete);
+      sinon.assert.calledWithMatch(Drafts.delete, {threadId: 1});
+      sinon.assert.calledOnce(Drafts.store);
+    });
+  });
+
+
   suite('sendSMS() >', function() {
     test('send to one recipient successfully', function() {
       var onSuccessCalledTimes = 0;

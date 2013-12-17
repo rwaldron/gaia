@@ -50,14 +50,23 @@ var MessageManager = {
 
   onMessageSending: function mm_onMessageSending(e) {
     var message = e.message;
-    var threadId = message.threadId;
+    var thread = Threads.get(message.threadId);
 
     Threads.registerMessage(message);
 
-    if (threadId === Threads.currentId) {
+    // If a thread-less draft is sent as a message and results in
+    // assimilation to an existing thread, make sure the existing
+    // thread-bound draft is removed as well.
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=951339
+    if (thread && thread.hasDrafts) {
+      Drafts.delete(thread.drafts.latest).store();
+    }
+
+    if (thread && thread.id === Threads.currentId) {
       ThreadUI.onMessageSending(message);
     } else {
-      window.location.hash = '#thread=' + threadId;
+      // Redirect to newly created thread conversation
+      window.location.hash = '#thread=' + message.threadId;
     }
     ThreadListUI.onMessageSending(message);
   },
