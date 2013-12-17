@@ -2014,6 +2014,16 @@ var ThreadUI = global.ThreadUI = {
 
   onMessageSent: function thui_onMessageSent(message) {
     var messageDOM = document.getElementById('message-' + message.id);
+    var thread = Threads.get(message.threadId);
+
+    // If a thread-less draft is sent as a message and results in
+    // assimilation to an existing thread, make sure the existing
+    // thread-bound draft is removed as well.
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=951339
+    if (thread.hasDrafts) {
+      Drafts.delete(thread.drafts.latest);
+      Drafts.store();
+    }
 
     if (!messageDOM) {
       return;
